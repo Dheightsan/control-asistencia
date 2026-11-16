@@ -1,6 +1,5 @@
 // Levanta un PostgreSQL local sin Docker usando el paquete embedded-postgres.
 // Se usa de dos formas: `npm run db` (queda corriendo) o importando iniciar().
-import EmbeddedPostgres from 'embedded-postgres';
 import { rmSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -8,6 +7,8 @@ import path from 'node:path';
 const raiz = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 export async function iniciar({ puerto = 54329, carpeta = '.pgdata' } = {}) {
+  // Import diferido: en CI hay postgres de servicio y el binario de Linux no se instala.
+  const { default: EmbeddedPostgres } = await import('embedded-postgres');
   const databaseDir = path.join(raiz, carpeta);
   // Datos desechables: cada arranque parte de una base vacia.
   rmSync(databaseDir, { recursive: true, force: true });
