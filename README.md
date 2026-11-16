@@ -17,10 +17,9 @@ Fuentes, revisadas el 16-11-2026:
 
 - Código del Trabajo, arts. 30, 31 y 32: https://www.bcn.cl/leychile/navegar?idNorma=207436
 - Ley 21.561 (publicada el 26-04-2023, reduce la jornada en tramos): https://www.diariooficial.interior.gob.cl/publicaciones/2023/04/26/43536/01/2306561.pdf
-- Minisitio 40 horas de la Dirección del Trabajo: https://dt.gob.cl/portal/1626/w3-propertyname-2556.html
 - Cálculo de la hora extra con sueldo mensual (42 horas): https://dt.gob.cl/portal/1628/w3-article-95182.html
 
-El texto de la ley dice 42 horas "al tercer año" desde la publicación; la fecha exacta del 26-04-2026 la confirman el minisitio de la DT y las notas de la DT. No es asesoría legal: no cubre jornadas especiales, turnos ni pactos de horas extra por escrito (art. 32).
+La ley dice 42 horas "al tercer año" desde la publicación, o sea el 26-04-2026. Esa fecha sale en la prensa sobre el Dictamen 142/09 de la DT (por ejemplo https://www.diarioconstitucional.cl/2026/03/04/reduccion-a-42-horas-semanales-debera-implementarse-desde-abril-de-2026/). No es asesoría legal: no cubre jornadas especiales, turnos ni pactos de horas extra por escrito (art. 32).
 
 ## Cómo correrlo
 
@@ -44,7 +43,7 @@ npm run dev -w web                  # http://localhost:3000
 
 Las variables están en `.env.example`. Si `DATABASE_URL` ya existe (como en CI), las pruebas no levantan el postgres embebido y usan esa base.
 
-Con Docker: `docker compose up -d` deja un postgres 16 en el mismo puerto 54329. Ese `docker-compose.yml` no lo pude probar, porque en esta máquina no hay Docker. El workflow de `.github/workflows/ci.yml` tampoco se ha corrido en GitHub todavía.
+Con Docker: `docker compose up -d` deja un postgres 16 en el mismo puerto 54329 (no lo he probado, no tengo Docker en este equipo).
 
 ## API
 
@@ -65,7 +64,7 @@ Errores: 400 si la salida no es posterior a la entrada o los datos no validan, 4
 4. Todas las fechas se tratan como UTC, sin husos horarios ni cambio de hora. Es una simplificación a propósito; un producto real tendría que guardar la zona de la empresa.
 5. TypeORM crea las tablas con `synchronize` y no hay migraciones, para mantener el proyecto chico. En producción se usarían migraciones.
 
-Versiones: uso NestJS 11 y TypeORM 0.3 porque las versiones más nuevas (NestJS 12, TypeORM 1.x) son solo ESM y complican Jest sin aportar algo que este proyecto necesite. Next.js 16, React 19 y Playwright están en su última versión. `embedded-postgres` instala PostgreSQL 18 y en CI se usa postgres 16; el SQL es el mismo en ambos.
+Uso NestJS 11 y TypeORM 0.3 porque NestJS 12 es solo ESM y con Jest se complica. Localmente corre PostgreSQL 18 (`embedded-postgres`) y en CI postgres 16.
 
 ## Estructura
 
