@@ -75,16 +75,17 @@ describe('API (contra PostgreSQL real)', () => {
   describe('GET /trabajadores/:id/semana', () => {
     it('calcula horas ordinarias, extra y monto', async () => {
       const { id } = await crearTrabajador('Luis Soto', 900_000); // valor hora 5000
-      // lunes a viernes, 9 h cada dia = 45 h
+      // lunes a viernes 8 h + sabado 4 h = 44 h
       for (const d of ['04', '05', '06', '07', '08']) {
-        await marcar(id, `2026-05-${d}T08:00:00Z`, `2026-05-${d}T17:00:00Z`).expect(201);
+        await marcar(id, `2026-05-${d}T08:00:00Z`, `2026-05-${d}T16:00:00Z`).expect(201);
       }
+      await marcar(id, '2026-05-09T08:00:00Z', '2026-05-09T12:00:00Z').expect(201);
       const r = await http().get(`/trabajadores/${id}/semana?desde=2026-05-04`).expect(200);
       expect(r.body).toMatchObject({
         horasOrdinarias: 42,
-        horasExtra: 3,
+        horasExtra: 2,
         valorHora: 5000,
-        montoHorasExtra: 22_500,
+        montoHorasExtra: 15_000,
         diasSobreTope: [],
       });
       expect(r.body.dias).toHaveLength(7);

@@ -17,13 +17,22 @@ export async function iniciar({ puerto = 54329, carpeta = '.pgdata' } = {}) {
     password: 'asistencia',
     port: puerto,
     persistent: false,
+    onLog: () => {}, // sin ruido en la salida de las pruebas
   });
   await pg.initialise();
   await pg.start();
   await pg.createDatabase('asistencia');
   return {
     url: `postgres://asistencia:asistencia@localhost:${puerto}/asistencia`,
-    detener: () => pg.stop(),
+    detener: async () => {
+      try {
+        await pg.stop();
+      } catch (e) {
+        // En Windows el postgres aun puede tener la carpeta tomada al cerrar: se reintenta el borrado.
+        if (e?.code !== 'EBUSY') throw e;
+        rmSync(databaseDir, { recursive: true, force: true, maxRetries: 20, retryDelay: 500 });
+      }
+    },
   };
 }
 

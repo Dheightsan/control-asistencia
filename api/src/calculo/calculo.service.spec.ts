@@ -45,12 +45,13 @@ describe('CalculoService', () => {
   });
 
   it('paga las horas extra con 50 % de recargo', () => {
-    // 5 dias de 9 h = 45 h: 3 h extra, 3 * 5000 * 1.5 = 22500
-    const marcas = ['04', '05', '06', '07', '08'].map((d) => dia(`2026-05-${d}`, 9));
+    // lunes a viernes 8 h + sabado 4 h = 44 h: 2 h extra, 2 * 5000 * 1.5 = 15000
+    const marcas = ['04', '05', '06', '07', '08'].map((d) => dia(`2026-05-${d}`, 8));
+    marcas.push(dia('2026-05-09', 4));
     const r = servicio.calcularSemana(marcas, SUELDO, DESDE);
     expect(r.horasOrdinarias).toBe(42);
-    expect(r.horasExtra).toBe(3);
-    expect(r.montoHorasExtra).toBe(22_500);
+    expect(r.horasExtra).toBe(2);
+    expect(r.montoHorasExtra).toBe(15_000);
     expect(r.diasSobreTope).toEqual([]);
   });
 
