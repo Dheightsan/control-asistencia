@@ -48,6 +48,14 @@ export default async function () {
 
     await esperar(`http://localhost:${PUERTO_API}/trabajadores`, api);
     await esperar(`http://localhost:${PUERTO_WEB}`, web);
+
+    // Con una base externa (CI) quedan datos de las pruebas de la API: se parte vacio.
+    if (process.env.DATABASE_URL) {
+      const base = `http://localhost:${PUERTO_API}/trabajadores`;
+      for (const t of await (await fetch(base)).json()) {
+        await fetch(`${base}/${t.id}`, { method: 'DELETE' });
+      }
+    }
   } catch (e) {
     for (const f of apagar.reverse()) await f();
     throw e;
