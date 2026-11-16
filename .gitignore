@@ -7,3 +7,4 @@ test-results/
 playwright-report/
 *.tsbuildinfo
 install.log
+web/next-env.d.ts

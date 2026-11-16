@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: asistencia
+          POSTGRES_PASSWORD: asistencia
+          POSTGRES_DB: asistencia
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U asistencia"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgres://asistencia:asistencia@localhost:5432/asistencia
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run test:unit -w api
+      - run: npm run test:e2e -w api
+      - run: npx playwright install --with-deps chromium
+      - run: npm run e2e

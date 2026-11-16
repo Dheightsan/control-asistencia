@@ -35,9 +35,10 @@ export interface ResultadoSemana {
 const aHoras = (minutos: number) => Math.round((minutos / 60) * 100) / 100;
 const aFecha = (ms: number) => new Date(ms).toISOString().slice(0, 10);
 
-// Valor de la hora ordinaria: sueldo mensual / 30 * 7 / horas de la semana (criterio de la DT).
+// Valor de la hora ordinaria con sueldo mensual (formula de la DT): sueldo / 30 * 28 / (4 * horas semanales).
+// Con 42 horas el divisor es 168. Equivale a sueldo / 30 * 7 / 42.
 export function valorHora(sueldoBase: number): number {
-  return ((sueldoBase / 30) * 7) / HORAS_SEMANA;
+  return ((sueldoBase / 30) * 28) / (4 * HORAS_SEMANA);
 }
 
 export function validarMarca(m: MarcaEntrada): void {

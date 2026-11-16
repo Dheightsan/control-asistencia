@@ -10,10 +10,14 @@ async function crearTrabajador(page: Page, nombre: string, sueldo: number) {
   await expect(page.getByRole('button', { name: nombre, exact: true })).toHaveAttribute('aria-pressed', 'true');
 }
 
-async function registrarMarca(page: Page, entrada: string, salida: string) {
+// Espera a que la API responda; si la marca se guardo, el formulario queda vacio.
+async function registrarMarca(page: Page, entrada: string, salida: string, guardada = true) {
   await page.getByLabel('Entrada').fill(entrada);
   await page.getByLabel('Salida').fill(salida);
+  const respuesta = page.waitForResponse((r) => r.url().endsWith('/marcas') && r.request().method() === 'POST');
   await page.getByRole('button', { name: 'Registrar marca' }).click();
+  await respuesta;
+  if (guardada) await expect(page.getByLabel('Entrada')).toHaveValue('');
 }
 
 test('crea un trabajador, registra marcas y ve las horas extra de la semana', async ({ page }) => {
@@ -39,8 +43,8 @@ test('crea un trabajador, registra marcas y ve las horas extra de la semana', as
 test('muestra el error de la API cuando la salida es anterior a la entrada', async ({ page }) => {
   await page.goto('/');
   await crearTrabajador(page, 'Luis Soto', 800_000);
-  await registrarMarca(page, '2026-05-04T17:00', '2026-05-04T08:00');
-  await expect(page.getByRole('alert')).toContainText('La salida debe ser posterior a la entrada');
+  await registrarMarca(page, '2026-05-04T17:00', '2026-05-04T08:00', false);
+  await expect(page.locator('p.error')).toContainText('La salida debe ser posterior a la entrada');
 });
 
 test('avisa cuando un dia pasa de 2 horas extra', async ({ page }) => {
