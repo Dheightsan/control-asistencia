@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Control de asistencia | José Daniel Sánchez</title>
+<style>
+  :root { --texto: #1d2330; --suave: #556070; --borde: #d9dde5; --fondo: #f5f6f8; --link: #1f5fbf; }
+  html, body { overflow-x: clip; }
+  body { margin: 0; font-family: system-ui, sans-serif; background: var(--fondo); color: var(--texto); line-height: 1.55; }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 56px; }
+  h1 { font-size: 1.6rem; margin: 0 0 8px; }
+  h2 { font-size: 1.1rem; margin: 32px 0 8px; }
+  p, li { max-width: 68ch; }
+  a { color: var(--link); }
+  figure { margin: 24px 0; }
+  figure img { width: 100%; height: auto; border: 1px solid var(--borde); border-radius: 6px; display: block; }
+  figcaption { font-size: 0.85rem; color: var(--suave); margin-top: 6px; }
+  ul { padding-left: 20px; }
+  footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--borde); font-size: 0.9rem; color: var(--suave); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Control de asistencia</h1>
+  <p>Registra la entrada y salida de un equipo y calcula las horas extra de cada semana con la jornada de 42 horas que rige en Chile desde abril de 2026.</p>
+
+  <figure>
+    <img src="captura.png" width="900" height="1008" alt="Semana de una trabajadora con 42 horas ordinarias, 5 horas extra el viernes y el aviso de que ese día pasó el tope de 2 horas extra">
+    <figcaption>Una semana con un viernes de 15 horas: 5 horas extra, pagadas con 50 % de recargo, y el aviso de que ese día pasó el tope.</figcaption>
+  </figure>
+
+  <h2>Qué hace</h2>
+  <ul>
+    <li>Suma las horas de la semana; lo que pasa de 42 es hora extra y se paga con 50 % de recargo.</li>
+    <li>Si una marca cruza la medianoche, reparte las horas entre los dos días.</li>
+    <li>Avisa cuando un día tiene más de 2 horas extra, que es el tope del Código del Trabajo.</li>
+    <li>No deja registrar una marca que se cruza con otra del mismo trabajador.</li>
+  </ul>
+
+  <h2>Cómo está hecho</h2>
+  <p>API en NestJS con PostgreSQL y una página en Next.js. Tiene pruebas del cálculo, pruebas de la API contra una base real y pruebas de Playwright en el navegador. Corren en GitHub Actions con cada cambio.</p>
+  <p>Código y detalle de la regla legal: <a href="https://github.com/Dheightsan/control-asistencia">github.com/Dheightsan/control-asistencia</a></p>
+
+  <h2>Otros proyectos</h2>
+  <ul>
+    <li><a href="https://github.com/Dheightsan/grounded-faq-api">grounded-faq-api</a>: API en FastAPI que responde solo con los datos de un archivo y avisa cuando no sabe.</li>
+    <li><a href="https://github.com/Dheightsan/books-crawler">books-crawler</a>: scraper en Python que respeta robots.txt y guarda en CSV y SQLite.</li>
+    <li><a href="https://pypi.org/project/gh-momentum/">gh-momentum</a>: paquete publicado en PyPI que encuentra repos de GitHub que están creciendo rápido.</li>
+  </ul>
+
+  <footer>José Daniel Sánchez, Santiago · <a href="https://github.com/Dheightsan">GitHub</a> · <a href="https://www.linkedin.com/in/jos%C3%A9-daniel-s%C3%A1nchez-pesantes-0a6946441">LinkedIn</a></footer>
+</main>
+</body>
+</html>
