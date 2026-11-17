@@ -1,5 +1,10 @@
 # Control de asistencia
 
+[![CI](https://github.com/Dheightsan/control-asistencia/actions/workflows/ci.yml/badge.svg)](https://github.com/Dheightsan/control-asistencia/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Node](https://img.shields.io/badge/node-20.19%2B-green.svg)](https://nodejs.org/)
+[![Demo](https://img.shields.io/badge/demo-GitHub%20Pages-blue.svg)](https://dheightsan.github.io/control-asistencia/)
+
 Registra las marcas de entrada y salida de un equipo y calcula, por semana, las horas ordinarias, las horas extra y cuánto cuestan con la regla chilena de la jornada de 42 horas.
 
 Stack: NestJS + TypeORM + PostgreSQL (api), Next.js App Router (web), Jest + supertest (pruebas de la API) y Playwright con chromium (flujo completo).
