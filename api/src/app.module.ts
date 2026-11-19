@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CalculoService } from './calculo/calculo.service';
+import { SemillaDemoService } from './demo/semilla-demo.service';
 import { Marca } from './marcas/marca.entity';
 import { MarcasController } from './marcas/marcas.controller';
 import { MarcasService } from './marcas/marcas.service';
@@ -20,6 +21,6 @@ import { TrabajadoresService } from './trabajadores/trabajadores.service';
     TypeOrmModule.forFeature([Trabajador, Marca]),
   ],
   controllers: [TrabajadoresController, MarcasController],
-  providers: [CalculoService, TrabajadoresService, MarcasService],
+  providers: [CalculoService, TrabajadoresService, MarcasService, SemillaDemoService],
 })
 export class AppModule {}
