@@ -1,4 +1,6 @@
-export const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
+// En la demo la pagina y la API comparten dominio
+export const DEMO = process.env.NEXT_PUBLIC_MISMO_ORIGEN === '1';
+export const API = DEMO ? '' : (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001');
 
 export interface Trabajador {
   id: number;

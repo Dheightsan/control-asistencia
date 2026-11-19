@@ -1,7 +1,7 @@
 'use client';
 
 import { FormEvent, useCallback, useEffect, useState } from 'react';
-import { pedir, Semana, Trabajador } from './api';
+import { DEMO, pedir, Semana, Trabajador } from './api';
 
 const pesos = (n: number) => `$${n.toLocaleString('es-CL')}`;
 
@@ -21,7 +21,10 @@ export default function Pagina() {
   const [error, setError] = useState('');
 
   const cargarTrabajadores = useCallback(async () => {
-    setTrabajadores(await pedir<Trabajador[]>('/trabajadores'));
+    const lista = await pedir<Trabajador[]>('/trabajadores');
+    setTrabajadores(lista);
+    // Elige el primero para mostrar una semana al abrir
+    setSeleccionado((actual) => actual ?? lista[0]?.id ?? null);
   }, []);
 
   const cargarSemana = useCallback(async () => {
@@ -85,6 +88,13 @@ export default function Pagina() {
   return (
     <main>
       <h1>Control de asistencia</h1>
+      {DEMO && (
+        <p className="nota">
+          Demo con datos de ejemplo de esta semana. Puedes agregar trabajadores y marcas; todo vuelve al inicio cuando
+          el servidor se reinicia. API documentada en <a href="/docs">/docs</a> ·{' '}
+          <a href="https://github.com/Dheightsan/control-asistencia">código en GitHub</a>
+        </p>
+      )}
 
       <section>
         <h2>Trabajadores</h2>

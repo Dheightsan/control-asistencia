@@ -19,3 +19,4 @@ th:first-child, td:first-child { text-align: left; }
 .resumen div { background: #f0f2f6; border-radius: 4px; padding: 8px; }
 .resumen dt { font-size: 0.75rem; color: #556; }
 .resumen dd { margin: 0; font-size: 1.1rem; font-weight: 600; }
+.nota { color: #556070; font-size: 0.9rem; margin: -8px 0 16px; }
