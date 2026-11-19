@@ -1,0 +1,20 @@
+# La base va en Neon: la gratis de Render vence a los 30 dias
+services:
+  - type: web
+    name: control-asistencia
+    runtime: node
+    plan: free
+    region: virginia
+    buildCommand: npm ci && npm run build:demo
+    startCommand: node api/dist/main.js
+    # Pagina estatica, asi no despierta la base
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATABASE_URL
+        sync: false
+      - key: SEMILLA_DEMO
+        value: "1"
+      - key: WEB_DIR
+        value: web/out
