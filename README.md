@@ -9,6 +9,14 @@ Registra las marcas de entrada y salida de un equipo y calcula, por semana, las 
 
 Stack: NestJS + TypeORM + PostgreSQL (api), Next.js App Router (web), Jest + supertest (pruebas de la API) y Playwright con chromium (flujo completo).
 
+## Demo
+
+En línea: https://DEMO-PENDIENTE.onrender.com (la API documentada está en `/docs`).
+
+Tiene tres trabajadores de ejemplo con la semana actual: una con 2 horas extra, uno que pasa el tope de 2 horas extra el viernes y una sin horas extra. Se puede agregar trabajadores y marcas; los datos vuelven al inicio cada vez que el servidor arranca.
+
+Corre en el plan gratis de Render con la base en Neon. Si nadie la usó en los últimos 15 minutos, el servidor está dormido y la primera carga tarda cerca de un minuto.
+
 ## La regla legal
 
 Con la ley 21.561 la jornada ordinaria baja de 44 a 42 horas semanales desde el 26 de abril de 2026 (40 horas en 2028). El proyecto usa esto:
@@ -50,6 +58,24 @@ Las variables están en `.env.example`. Si `DATABASE_URL` ya existe (como en CI)
 
 Con Docker: `docker compose up -d` deja un postgres 16 en el mismo puerto 54329 (no lo he probado, no tengo Docker en este equipo).
 
+### Build de la demo
+
+```bash
+npm run build:demo                  # compila la API y exporta la página a web/out
+WEB_DIR=web/out SEMILLA_DEMO=1 DATABASE_URL=postgres://... node api/dist/main.js
+```
+
+Así un solo proceso sirve la página en `/`, la API y Swagger en `/docs`, en el puerto `PORT` (o `API_PORT`, o 3001).
+
+| Variable | Para qué |
+| --- | --- |
+| `DATABASE_URL` | PostgreSQL. Con Neon va con `?sslmode=require` al final |
+| `WEB_DIR` | Carpeta de la página exportada; si no está, la API no sirve página |
+| `SEMILLA_DEMO` | Con `1`, al arrancar borra todo y carga los datos de ejemplo de la semana actual |
+| `PORT` | Puerto que asigna el hosting |
+
+`render.yaml` despliega eso en Render. El `Dockerfile` arma la misma imagen para otros hostings; lo construye el CI, no este equipo.
+
 ## API
 
 | Método | Ruta | Qué hace |
@@ -58,6 +84,7 @@ Con Docker: `docker compose up -d` deja un postgres 16 en el mismo puerto 54329 
 | GET, PATCH, DELETE | `/trabajadores/:id` | Lee, edita y borra (borra también sus marcas) |
 | POST | `/marcas` | Registra una marca (`trabajadorId`, `entrada`, `salida` en ISO 8601) |
 | GET | `/trabajadores/:id/semana?desde=AAAA-MM-DD` | Horas ordinarias, horas extra, valor hora, monto extra y detalle por día |
+| GET | `/docs` | Swagger, para probar los endpoints desde el navegador |
 
 Errores: 400 si la salida no es posterior a la entrada o los datos no validan, 404 si el trabajador no existe, 409 si la marca se solapa con otra del mismo trabajador.
 
@@ -78,4 +105,5 @@ api/    NestJS: entidades, endpoints, calculo.service.ts y pruebas (unitarias en
 web/    Next.js: una página en web/app/page.tsx
 e2e/    Playwright: global-setup.mjs levanta todo y apaga todo al terminar
 scripts/postgres-embebido.mjs   postgres local sin Docker
+scripts/build-demo.mjs          build de la demo (API + página estática)
 ```
