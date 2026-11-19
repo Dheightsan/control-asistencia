@@ -91,8 +91,8 @@ export default function Pagina() {
       {DEMO && (
         <p className="nota">
           Demo con datos de ejemplo de esta semana. Puedes agregar trabajadores y marcas; todo vuelve al inicio cuando
-          el servidor se reinicia. API documentada en <a href="/docs">/docs</a> ·{' '}
-          <a href="https://github.com/Dheightsan/control-asistencia">código en GitHub</a>
+          el servidor se reinicia. API en <a href="/docs">/docs</a>, código en{' '}
+          <a href="https://github.com/Dheightsan/control-asistencia">GitHub</a>.
         </p>
       )}
 

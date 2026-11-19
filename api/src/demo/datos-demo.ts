@@ -22,25 +22,25 @@ function turno(lunes: string, dia: number, desde: string, hasta: string) {
 
 // Con horas extra, sobre el tope diario y sin extra
 export function datosDemo(lunes: string): TrabajadorDemo[] {
-  const lunesAViernes = (desde: string, hasta: string) => [0, 1, 2, 3, 4].map((d) => turno(lunes, d, desde, hasta));
+  const dias = (n: number, desde: string, hasta: string) => [...Array(n).keys()].map((d) => turno(lunes, d, desde, hasta));
   return [
     {
       // 44 h, 2 extra
       nombre: 'Ana Pérez',
       sueldoBase: 900_000,
-      marcas: [...lunesAViernes('08:00', '16:00'), turno(lunes, 5, '08:00', '12:00')],
+      marcas: [...dias(5, '08:00', '16:00'), turno(lunes, 5, '08:00', '12:00')],
     },
     {
       // 47 h, 5 extra el viernes
       nombre: 'Luis Soto',
       sueldoBase: 800_000,
-      marcas: [...lunesAViernes('08:00', '16:00').slice(0, 4), turno(lunes, 4, '06:00', '21:00')],
+      marcas: [...dias(4, '08:00', '16:00'), turno(lunes, 4, '06:00', '21:00')],
     },
     {
       // 40 h, sin extra
       nombre: 'Marta Ríos',
       sueldoBase: 1_200_000,
-      marcas: lunesAViernes('09:00', '17:00'),
+      marcas: dias(5, '09:00', '17:00'),
     },
   ];
 }

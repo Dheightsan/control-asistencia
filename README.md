@@ -67,12 +67,10 @@ WEB_DIR=web/out SEMILLA_DEMO=1 DATABASE_URL=postgres://... node api/dist/main.js
 
 Así un solo proceso sirve la página en `/`, la API y Swagger en `/docs`, en el puerto `PORT` (o `API_PORT`, o 3001).
 
-| Variable | Para qué |
-| --- | --- |
-| `DATABASE_URL` | PostgreSQL. Con Neon va con `?sslmode=require` al final |
-| `WEB_DIR` | Carpeta de la página exportada; si no está, la API no sirve página |
-| `SEMILLA_DEMO` | Con `1`, al arrancar borra todo y carga los datos de ejemplo de la semana actual |
-| `PORT` | Puerto que asigna el hosting |
+- `DATABASE_URL`: con Neon lleva `?sslmode=require` al final.
+- `WEB_DIR`: carpeta de la página exportada. Sin ella la API no sirve página.
+- `SEMILLA_DEMO=1`: al arrancar borra todo y carga los datos de ejemplo de la semana actual.
+- `PORT`: lo asigna el hosting.
 
 `render.yaml` despliega eso en Render. El `Dockerfile` arma la misma imagen para otros hostings; lo construye el CI, no este equipo.
 
