@@ -1,7 +1,9 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { ActualizarTrabajadorDto, CrearTrabajadorDto, SemanaQueryDto } from './trabajador.dto';
 import { TrabajadoresService } from './trabajadores.service';
 
+@ApiTags('trabajadores')
 @Controller('trabajadores')
 export class TrabajadoresController {
   constructor(private readonly servicio: TrabajadoresService) {}
