@@ -48,7 +48,7 @@ npm run dev -w web                  # http://localhost:3000
 
 Las variables están en `.env.example`. Si `DATABASE_URL` ya existe (como en CI), las pruebas no levantan el postgres embebido y usan esa base.
 
-Con Docker: `docker compose up -d` deja un postgres 16 en el mismo puerto 54329 (no lo he probado, no tengo Docker en este equipo).
+Con Docker: `docker compose up -d` deja un postgres 16 en el mismo puerto 54329.
 
 ## API
 
