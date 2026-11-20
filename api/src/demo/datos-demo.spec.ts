@@ -3,9 +3,9 @@ import { datosDemo, lunesUtc } from './datos-demo';
 
 describe('datos de la demo', () => {
   it('lunesUtc devuelve el lunes de la semana', () => {
-    expect(lunesUtc(new Date('2026-05-04T10:00:00Z'))).toBe('2026-05-04'); // lunes
-    expect(lunesUtc(new Date('2026-05-07T23:59:00Z'))).toBe('2026-05-04'); // jueves
-    expect(lunesUtc(new Date('2026-05-10T12:00:00Z'))).toBe('2026-05-04'); // domingo
+    expect(lunesUtc(new Date('2026-05-04T10:00:00Z'))).toBe('2026-05-04');
+    expect(lunesUtc(new Date('2026-05-07T23:59:00Z'))).toBe('2026-05-04');
+    expect(lunesUtc(new Date('2026-05-10T12:00:00Z'))).toBe('2026-05-04');
     expect(lunesUtc(new Date('2026-03-01T12:00:00Z'))).toBe('2026-02-23'); // cruza de mes
   });
 

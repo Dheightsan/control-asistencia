@@ -23,7 +23,7 @@ describe('demo publica (contra PostgreSQL real)', () => {
   it('la semilla deja tres trabajadores con su semana calculada', async () => {
     const semilla = app.get(SemillaDemoService);
     await semilla.cargar('2026-05-04');
-    await semilla.cargar('2026-05-04'); // dos veces: no duplica
+    await semilla.cargar('2026-05-04');
 
     const lista = (await http().get('/trabajadores').expect(200)).body as { id: number; nombre: string }[];
     expect(lista.map((t) => t.nombre).sort()).toEqual(['Ana Pérez', 'Luis Soto', 'Marta Ríos']);

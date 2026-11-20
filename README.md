@@ -11,11 +11,7 @@ Stack: NestJS + TypeORM + PostgreSQL (api), Next.js App Router (web), Jest + sup
 
 ## Demo
 
-En línea: https://DEMO-PENDIENTE.onrender.com (la API documentada está en `/docs`).
-
-Tiene tres trabajadores de ejemplo con la semana actual: una con 2 horas extra, uno que pasa el tope de 2 horas extra el viernes y una sin horas extra. Se puede agregar trabajadores y marcas; los datos vuelven al inicio cada vez que el servidor arranca.
-
-Corre en el plan gratis de Render con la base en Neon. Si nadie la usó en los últimos 15 minutos, el servidor está dormido y la primera carga tarda cerca de un minuto.
+Corre en el plan gratis de Render con la base en Neon, así que la primera carga puede tardar un minuto. Trae a Ana, Luis y Marta con marcas de la semana actual (Luis pasa el tope de horas extra el viernes). Se pueden agregar trabajadores y marcas, pero todo vuelve al inicio cuando el servidor arranca. La API documentada está en `/docs`.
 
 ## La regla legal
 
@@ -65,14 +61,9 @@ npm run build:demo                  # compila la API y exporta la página a web/
 WEB_DIR=web/out SEMILLA_DEMO=1 DATABASE_URL=postgres://... node api/dist/main.js
 ```
 
-Así un solo proceso sirve la página en `/`, la API y Swagger en `/docs`, en el puerto `PORT` (o `API_PORT`, o 3001).
+Así un solo proceso sirve la página en `/`, la API y Swagger en `/docs`, en el puerto `PORT` (o `API_PORT`, o 3001). Sin `WEB_DIR` no sirve la página, y con `SEMILLA_DEMO=1` borra todo al arrancar y carga los datos de ejemplo. Si la base es de Neon, `DATABASE_URL` lleva `?sslmode=require` al final.
 
-- `DATABASE_URL`: con Neon lleva `?sslmode=require` al final.
-- `WEB_DIR`: carpeta de la página exportada. Sin ella la API no sirve página.
-- `SEMILLA_DEMO=1`: al arrancar borra todo y carga los datos de ejemplo de la semana actual.
-- `PORT`: lo asigna el hosting.
-
-`render.yaml` despliega eso en Render. El `Dockerfile` arma la misma imagen para otros hostings; lo construye el CI, no este equipo.
+`render.yaml` despliega eso en Render. También hay un `Dockerfile` para otros hostings, que solo lo construye el CI.
 
 ## API
 
