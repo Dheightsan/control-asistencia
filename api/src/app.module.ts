@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { EXPLICADOR_IA, explicadorDesdeEntorno } from './alertas/explicador';
 import { CalculoService } from './calculo/calculo.service';
 import { Marca } from './marcas/marca.entity';
 import { MarcasController } from './marcas/marcas.controller';
@@ -20,6 +21,11 @@ import { TrabajadoresService } from './trabajadores/trabajadores.service';
     TypeOrmModule.forFeature([Trabajador, Marca]),
   ],
   controllers: [TrabajadoresController, MarcasController],
-  providers: [CalculoService, TrabajadoresService, MarcasService],
+  providers: [
+    CalculoService,
+    TrabajadoresService,
+    MarcasService,
+    { provide: EXPLICADOR_IA, useFactory: () => explicadorDesdeEntorno() },
+  ],
 })
 export class AppModule {}

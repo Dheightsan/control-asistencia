@@ -2,6 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
+import { EXPLICADOR_IA, Explicador } from '../src/alertas/explicador';
 import { configurarApp } from '../src/configurar-app';
 
 describe('API (contra PostgreSQL real)', () => {
@@ -9,7 +10,11 @@ describe('API (contra PostgreSQL real)', () => {
   const http = () => request(app.getHttpServer());
 
   beforeAll(async () => {
-    const modulo = await Test.createTestingModule({ imports: [AppModule] }).compile();
+    // Sin IA, aunque el entorno tenga clave: las pruebas no salen a la red.
+    const modulo = await Test.createTestingModule({ imports: [AppModule] })
+      .overrideProvider(EXPLICADOR_IA)
+      .useValue(null)
+      .compile();
     app = modulo.createNestApplication();
     configurarApp(app);
     await app.init();
@@ -104,6 +109,83 @@ describe('API (contra PostgreSQL real)', () => {
       await http().get(`/trabajadores/${id}/semana?desde=04-05-2026`).expect(400);
       await http().get(`/trabajadores/${id}/semana?desde=2026-13-45`).expect(400);
       await http().get('/trabajadores/999999/semana?desde=2026-05-04').expect(404);
+    });
+  });
+  describe('GET /trabajadores/:id/alertas', () => {
+    it('semana sin marcas: lista vacia', async () => {
+      const { id } = await crearTrabajador();
+      const r = await http().get(`/trabajadores/${id}/alertas?desde=2026-05-04`).expect(200);
+      expect(r.body).toEqual({ desde: '2026-05-04', hasta: '2026-05-10', explicadoCon: 'plantilla', alertas: [] });
+    });
+
+    it('devuelve las alertas de la semana con su explicacion', async () => {
+      const { id } = await crearTrabajador('Rosa Mena');
+      // lunes 11 h seguidas (sin colacion, sobre 10 h ordinarias) y martes bien repartido
+      await marcar(id, '2026-05-04T08:00:00Z', '2026-05-04T19:00:00Z').expect(201);
+      await marcar(id, '2026-05-05T08:00:00Z', '2026-05-05T12:00:00Z').expect(201);
+      await marcar(id, '2026-05-05T13:00:00Z', '2026-05-05T17:00:00Z').expect(201);
+      const r = await http().get(`/trabajadores/${id}/alertas?desde=2026-05-04`).expect(200);
+      expect(r.body.alertas.map((a: { tipo: string; fecha: string; articulo: string }) => [a.fecha, a.tipo, a.articulo])).toEqual([
+        ['2026-05-04', 'colacion', 'Art. 34'],
+        ['2026-05-04', 'jornada_diaria_excedida', 'Art. 28'],
+      ]);
+      expect(r.body.explicadoCon).toBe('plantilla');
+      expect(r.body.alertas[1].explicacion).toContain('2026-05-04');
+    });
+
+    it('avisa las horas extra con pacto y el tope diario', async () => {
+      const { id } = await crearTrabajador('Pedro Lara');
+      for (const d of ['04', '05', '06', '07']) {
+        await marcar(id, `2026-05-${d}T08:00:00Z`, `2026-05-${d}T12:00:00Z`).expect(201);
+        await marcar(id, `2026-05-${d}T13:00:00Z`, `2026-05-${d}T17:00:00Z`).expect(201);
+      }
+      await marcar(id, '2026-05-08T06:00:00Z', '2026-05-08T10:00:00Z').expect(201);
+      await marcar(id, '2026-05-08T11:00:00Z', '2026-05-08T21:00:00Z').expect(201); // 14 h el viernes
+      const r = await http().get(`/trabajadores/${id}/alertas?desde=2026-05-04`).expect(200);
+      const tipos = r.body.alertas.map((a: { tipo: string }) => a.tipo);
+      expect(tipos).toEqual(expect.arrayContaining(['extra_sobre_tope_diario', 'horas_extra_con_pacto']));
+    });
+
+    it('una marca de mas de 16 horas queda como registro dudoso', async () => {
+      const { id } = await crearTrabajador();
+      await marcar(id, '2026-05-04T06:00:00Z', '2026-05-05T01:00:00Z').expect(201);
+      const r = await http().get(`/trabajadores/${id}/alertas?desde=2026-05-04`).expect(200);
+      expect(r.body.alertas.some((a: { tipo: string }) => a.tipo === 'registro_dudoso')).toBe(true);
+    });
+
+    it('desde faltante o mal escrito es 400; trabajador inexistente es 404', async () => {
+      const { id } = await crearTrabajador();
+      await http().get(`/trabajadores/${id}/alertas`).expect(400);
+      await http().get(`/trabajadores/${id}/alertas?desde=04-05-2026`).expect(400);
+      await http().get(`/trabajadores/${id}/alertas?desde=2026-13-45`).expect(400);
+      await http().get('/trabajadores/abc/alertas?desde=2026-05-04').expect(400);
+      await http().get('/trabajadores/999999/alertas?desde=2026-05-04').expect(404);
+    });
+  });
+
+  describe('alertas con explicador de IA (cliente falso)', () => {
+    let appIa: INestApplication;
+    const ia: Explicador = { explicar: async (alertas) => alertas.map((a) => `Revisar el ${a.fecha}.`) };
+
+    beforeAll(async () => {
+      const modulo = await Test.createTestingModule({ imports: [AppModule] })
+        .overrideProvider(EXPLICADOR_IA)
+        .useValue(ia)
+        .compile();
+      appIa = modulo.createNestApplication();
+      configurarApp(appIa);
+      await appIa.init();
+    });
+    afterAll(async () => {
+      await appIa.close();
+    });
+
+    it('usa la explicacion de la IA cuando es valida', async () => {
+      const { id } = (await request(appIa.getHttpServer()).post('/trabajadores').send({ nombre: 'Eva', sueldoBase: 900_000 }).expect(201)).body;
+      await request(appIa.getHttpServer()).post('/marcas').send({ trabajadorId: id, entrada: '2026-05-04T08:00:00Z', salida: '2026-05-04T19:00:00Z' }).expect(201);
+      const r = await request(appIa.getHttpServer()).get(`/trabajadores/${id}/alertas?desde=2026-05-04`).expect(200);
+      expect(r.body.explicadoCon).toBe('ia');
+      expect(r.body.alertas[0].explicacion).toBe('Revisar el 2026-05-04.');
     });
   });
 });

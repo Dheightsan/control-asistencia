@@ -36,4 +36,9 @@ export class TrabajadoresController {
   semana(@Param('id', ParseIntPipe) id: number, @Query() query: SemanaQueryDto) {
     return this.servicio.semana(id, query.desde);
   }
+
+  @Get(':id/alertas')
+  alertas(@Param('id', ParseIntPipe) id: number, @Query() query: SemanaQueryDto) {
+    return this.servicio.alertas(id, query.desde);
+  }
 }
