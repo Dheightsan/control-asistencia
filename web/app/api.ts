@@ -23,6 +23,21 @@ export interface Semana {
   diasSobreTope: string[];
 }
 
+export interface Alerta {
+  tipo: string;
+  fecha: string;
+  detalle: string;
+  articulo: string;
+  explicacion: string;
+}
+
+export interface RespuestaAlertas {
+  desde: string;
+  hasta: string;
+  explicadoCon: 'plantilla' | 'ia';
+  alertas: Alerta[];
+}
+
 // Llama a la API y convierte los errores en un mensaje legible.
 export async function pedir<T>(ruta: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${API}${ruta}`, {

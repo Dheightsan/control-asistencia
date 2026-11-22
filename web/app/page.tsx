@@ -1,7 +1,7 @@
 'use client';
 
 import { FormEvent, useCallback, useEffect, useState } from 'react';
-import { pedir, Semana, Trabajador } from './api';
+import { Alerta, pedir, RespuestaAlertas, Semana, Trabajador } from './api';
 
 const pesos = (n: number) => `$${n.toLocaleString('es-CL')}`;
 
@@ -18,6 +18,7 @@ export default function Pagina() {
   const [seleccionado, setSeleccionado] = useState<number | null>(null);
   const [desde, setDesde] = useState(lunesActual);
   const [semana, setSemana] = useState<Semana | null>(null);
+  const [alertas, setAlertas] = useState<Alerta[]>([]);
   const [error, setError] = useState('');
 
   const cargarTrabajadores = useCallback(async () => {
@@ -27,6 +28,7 @@ export default function Pagina() {
   const cargarSemana = useCallback(async () => {
     if (seleccionado === null) return;
     setSemana(await pedir<Semana>(`/trabajadores/${seleccionado}/semana?desde=${desde}`));
+    setAlertas((await pedir<RespuestaAlertas>(`/trabajadores/${seleccionado}/alertas?desde=${desde}`)).alertas);
   }, [seleccionado, desde]);
 
   // Ejecuta una accion y muestra el error si la API lo devuelve.
@@ -166,6 +168,16 @@ export default function Pagina() {
                 </dl>
                 {semana.diasSobreTope.length > 0 && (
                   <p className="aviso">Mas de 2 horas extra el: {semana.diasSobreTope.join(', ')}</p>
+                )}
+                <h3>Alertas de jornada</h3>
+                {alertas.length === 0 ? (
+                  <p data-testid="sin-alertas">Sin alertas esta semana.</p>
+                ) : (
+                  <ul aria-label="Alertas de jornada" className="alertas">
+                    {alertas.map((a, i) => (
+                      <li key={`${a.fecha}-${a.tipo}-${i}`}>{a.explicacion}</li>
+                    ))}
+                  </ul>
                 )}
                 <table>
                   <thead>
