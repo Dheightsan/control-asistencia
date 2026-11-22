@@ -59,3 +59,16 @@ test('avisa cuando un dia pasa de 2 horas extra', async ({ page }) => {
   await expect(page.getByTestId('extra')).toHaveText('5');
   await expect(page.getByText('Mas de 2 horas extra el: 2026-05-08')).toBeVisible();
 });
+
+test('muestra las alertas de jornada de la semana en palabras simples', async ({ page }) => {
+  await page.goto('/');
+  await crearTrabajador(page, 'Rosa Mena', 900_000);
+  await page.getByLabel('Semana desde').fill(SEMANA);
+  await expect(page.getByTestId('sin-alertas')).toBeVisible();
+  // Un lunes de 11 horas seguidas: sin colacion y sobre las 10 horas ordinarias.
+  await registrarMarca(page, '2026-05-04T08:00', '2026-05-04T19:00');
+  const alertas = page.getByRole('list', { name: 'Alertas de jornada' }).getByRole('listitem');
+  await expect(alertas).toHaveCount(2);
+  await expect(alertas.first()).toContainText('2026-05-04');
+  await expect(page.getByTestId('sin-alertas')).toHaveCount(0);
+});
