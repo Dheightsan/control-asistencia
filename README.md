@@ -7,7 +7,11 @@
 
 Registra las marcas de entrada y salida de un equipo y calcula, por semana, las horas ordinarias, las horas extra y cuánto cuestan con la regla chilena de la jornada de 42 horas.
 
+![Una semana con 42 horas ordinarias y 5 horas extra el viernes](docs/captura.png)
+
 Stack: NestJS + TypeORM + PostgreSQL (api), Next.js App Router (web), Jest + supertest (pruebas de la API) y Playwright con chromium (flujo completo).
+
+Para probarlo: `npm install && npm test` (no necesita Docker ni una base instalada). El detalle está en [Cómo correrlo](#cómo-correrlo).
 
 ## La regla legal
 
